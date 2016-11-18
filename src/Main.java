@@ -51,57 +51,25 @@ public class Main
 					{
 						type = OperationType.ADDITION;
 						String[] inputSplit = input.split(" \\+ ");
-						List<List<Long>> fractionData = handleInput(inputSplit);
-						if(fractionData != null)
-						{
-							List<Long> newFraction = basicFractionOperations(fractionData, type);
-							printFraction(newFraction);
-							newFraction = reduceFraction(newFraction);
-							newFraction = makeMixed(newFraction);
-							printFraction(newFraction);
-						}
+						processFraction(inputSplit, type);
 					}
 					else if(operationType.equals(" - "))
 					{
 						type = OperationType.SUBTRACTION;
 						String[] inputSplit = input.split(" - ");
-						List<List<Long>> fractionData = handleInput(inputSplit);
-						if(fractionData != null)
-						{
-							List<Long> newFraction = basicFractionOperations(fractionData, type);
-							printFraction(newFraction);
-							newFraction = reduceFraction(newFraction);
-							newFraction = makeMixed(newFraction);
-							printFraction(newFraction);
-						}
+						processFraction(inputSplit, type);
 					}
 					else if(operationType.equals(" * "))
 					{
 						type = OperationType.MULTIPLICATION;
 						String[] inputSplit = input.split(" \\* ");
-						List<List<Long>> fractionData = handleInput(inputSplit);
-						if(fractionData != null)
-						{
-							List<Long> newFraction = basicFractionOperations(fractionData, type);
-							printFraction(newFraction);
-							newFraction = reduceFraction(newFraction);
-							newFraction = makeMixed(newFraction);
-							printFraction(newFraction);
-						}
+						processFraction(inputSplit, type);
 					}
 					else if(operationType.equals(" / "))
 					{
 						type = OperationType.DIVISION;
 						String[] inputSplit = input.split(" \\/ ");
-						List<List<Long>> fractionData = handleInput(inputSplit);
-						if(fractionData != null)
-						{
-							List<Long> newFraction = basicFractionOperations(fractionData, type);
-							printFraction(newFraction);
-							newFraction = reduceFraction(newFraction);
-							newFraction = makeMixed(newFraction);
-							printFraction(newFraction);
-						}
+						processFraction(inputSplit, type);
 					}
 				}
 			}
@@ -323,18 +291,70 @@ public class Main
 			mixedNumber++;
 			numerator -= denominator;
 		}
-		return Arrays.asList(mixedNumber, numerator, denominator);
+		List<Long> newFraction = new ArrayList<Long>();
+		if(mixedNumber != 0)
+		{
+			newFraction.add(mixedNumber);
+		}
+		newFraction.add(numerator);
+		newFraction.add(denominator);
+		return newFraction;
+	}
+	
+	public static List<Long> fixFraction(List<Long> fraction)
+	{
+		if(fraction.size() == 2)
+		{
+			long numerator = fraction.get(0);
+			long denominator = fraction.get(1);
+			if(numerator == denominator)
+			{
+				return Arrays.asList(1L);
+			}
+			if(denominator == 1)
+			{
+				return Arrays.asList(fraction.get(0));
+			}
+		}
+		if(fraction.size() == 3)
+		{
+			long mixedNumber = fraction.get(0);
+			long numerator = fraction.get(1);
+			long denominator = fraction.get(2);
+			if(denominator == 1)
+			{
+				return Arrays.asList(numerator + mixedNumber);
+			}
+		}
+		return fraction;
 	}
 	
 	public static void printFraction(List<Long> fraction)
 	{
+		fraction = fixFraction(fraction);
 		if(fraction.size() == 3)
 		{
 			System.out.println(fraction.get(0) + "_" + fraction.get(1) + "/" + fraction.get(2));
 		}
-		else
+		else if(fraction.size() == 2)
 		{
 			System.out.println(fraction.get(0) + "/" + fraction.get(1));
+		}
+		else
+		{
+			System.out.println(fraction.get(0));
+		}
+	}
+	
+	public static void processFraction(String[] inputSplit, OperationType type)
+	{
+		List<List<Long>> fractionData = handleInput(inputSplit);
+		if(fractionData != null)
+		{
+			List<Long> newFraction = basicFractionOperations(fractionData, type);
+			newFraction = reduceFraction(newFraction);
+			newFraction = makeMixed(newFraction);
+			printFraction(newFraction);
 		}
 	}
 }
