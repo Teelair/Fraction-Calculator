@@ -3,10 +3,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+
+enum OperationType
+{
+	ADDITION, SUBTRACTION, MULTIPLICATION, DIVISION, UNKNOWN;
+}
+
 public class Main 
 {
 	public static void main(String[] args)
 	{
+		OperationType type;
 		Scanner scanner = new Scanner(System.in);
 		boolean running = true;
 		System.out.println("Welcome to my Fraction Calculator!");
@@ -42,25 +49,55 @@ public class Main
 				{
 					if(operationType.equals(" + "))
 					{
+						type = OperationType.ADDITION;
 						String[] inputSplit = input.split(" \\+ ");
-						List<Long> newFraction = basicFractionOperations(handleInput(inputSplit), true);
-						System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+						List<List<Long>> fractionData = handleInput(inputSplit);
+						if(fractionData != null)
+						{
+							List<Long> newFraction = basicFractionOperations(fractionData, type);
+							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+							newFraction = reduceFraction(newFraction);
+							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+						}
 					}
 					else if(operationType.equals(" - "))
 					{
+						type = OperationType.SUBTRACTION;
 						String[] inputSplit = input.split(" - ");
-						List<Long> newFraction = basicFractionOperations(handleInput(inputSplit), false);
-						System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+						List<List<Long>> fractionData = handleInput(inputSplit);
+						if(fractionData != null)
+						{
+							List<Long> newFraction = basicFractionOperations(fractionData, type);
+							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+							newFraction = reduceFraction(newFraction);
+							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+						}
 					}
 					else if(operationType.equals(" * "))
 					{
+						type = OperationType.MULTIPLICATION;
 						String[] inputSplit = input.split(" \\* ");
-						handleInput(inputSplit);
+						List<List<Long>> fractionData = handleInput(inputSplit);
+						if(fractionData != null)
+						{
+							List<Long> newFraction = basicFractionOperations(fractionData, type);
+							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+							newFraction = reduceFraction(newFraction);
+							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+						}
 					}
 					else if(operationType.equals(" / "))
 					{
+						type = OperationType.DIVISION;
 						String[] inputSplit = input.split(" \\/ ");
-						handleInput(inputSplit);
+						List<List<Long>> fractionData = handleInput(inputSplit);
+						if(fractionData != null)
+						{
+							List<Long> newFraction = basicFractionOperations(fractionData, type);
+							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+							newFraction = reduceFraction(newFraction);
+							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+						}
 					}
 				}
 			}
@@ -77,7 +114,7 @@ public class Main
 			if(firstFractionData.isEmpty())
 			{
 				System.out.println("Sorry, your first fraction is invalid, please enter your input again.");
-				break;
+				return null;
 			}
 		}
 
@@ -88,7 +125,7 @@ public class Main
 			if(secondFractionData.isEmpty())
 			{
 				System.out.println("Sorry, your second fraction is invalid, please enter your input again.");
-				break;
+				return null;
 			}
 		}
 		return Arrays.asList(firstFractionData, secondFractionData);
@@ -110,7 +147,7 @@ public class Main
 				break;
 			}
 		}
-		return new boolean[] { minusCount == 1, underscoreCount == 1, (underscoreCount == 1 || underscoreCount == 0) && (minusCount == 1 || minusCount == 0) && slashCount == 1 };
+		return new boolean[] { underscoreCount == 1, (underscoreCount == 1 || underscoreCount == 0) && (minusCount == 1 || minusCount == 0) && slashCount == 1 };
 	}
 
 	public static boolean secondaryValidationCheck(String input)
@@ -132,9 +169,8 @@ public class Main
 	{
 		List<Long> fractionData = new ArrayList<Long>();
 		boolean[] results = breakFraction(fraction);
-		boolean isNegative = results[0];
-		boolean isMixed = results[1];
-		boolean isValid = results[2];
+		boolean isMixed = results[0];
+		boolean isValid = results[1];
 		if(isValid)
 		{
 			isValid = secondaryValidationCheck(fraction);
@@ -166,7 +202,7 @@ public class Main
 		return fractionData;
 	}
 
-	public static List<Long> basicFractionOperations(List<List<Long>> fractionData, boolean addition)
+	public static List<Long> basicFractionOperations(List<List<Long>> fractionData, OperationType type)
 	{
 		List<Long> firstFraction = fractionData.get(0);
 		List<Long> secondFraction = fractionData.get(1);
@@ -193,28 +229,83 @@ public class Main
 			secondFraction.add(numerator);
 			secondFraction.add(denominator);
 		}
+		
+		long firstFractionNumerator = firstFraction.get(0);
+		long secondFractionNumerator = secondFraction.get(0);
 
-		if(firstFraction.get(1) != secondFraction.get(1))
+		long firstFractionDenominator = firstFraction.get(1);
+		long secondFractionDenominator = secondFraction.get(1);
+		if(type == OperationType.ADDITION || type == OperationType.SUBTRACTION)
 		{
-			long firstFractionNumerator = firstFraction.get(0);
-			long secondFractionNumerator = secondFraction.get(0);
+			if(firstFraction.get(1) != secondFraction.get(1))
+			{
+				firstFractionNumerator *= secondFractionDenominator;
+				secondFractionNumerator *= firstFractionDenominator;
 
-			long firstFractionDenominator = firstFraction.get(1);
-			long secondFractionDenominator = secondFraction.get(1);
+				firstFractionDenominator *= secondFractionDenominator;
+				secondFractionDenominator = firstFractionDenominator;
+				return Arrays.asList(type == OperationType.ADDITION ? (firstFractionNumerator + secondFractionNumerator) : (firstFractionNumerator - secondFractionNumerator) , firstFractionDenominator);
+			}
+			else
+			{
+				long commonDenominator = firstFraction.get(1);
+				return Arrays.asList(type == OperationType.ADDITION ? (firstFractionNumerator + secondFractionNumerator) : (firstFractionNumerator - secondFractionNumerator) , commonDenominator);
+			}
+		}
+		
+		if(type == OperationType.MULTIPLICATION || type == OperationType.DIVISION)
+		{
+			if(type == OperationType.MULTIPLICATION)
+			{
+				firstFractionNumerator *= secondFractionNumerator;
+				firstFractionDenominator *= secondFractionDenominator;
+			}
+			else
+			{
+				firstFractionNumerator *= secondFractionDenominator;
+				firstFractionDenominator *= secondFractionNumerator;
+			}
+			return Arrays.asList(firstFractionNumerator, firstFractionDenominator);
+		}
+		return null;
+	}
 
-			firstFractionNumerator *= secondFractionDenominator;
-			secondFractionNumerator *= firstFractionDenominator;
+	public static long determineGCD(long numerator, long denominator)
+	{
+		long x = -1;
+		long a = Math.abs(numerator);
+		long b = Math.abs(denominator);
+		while(x != 0)
+		{
+			if(a > b)
+			{
+				long temp = b;
+				b = a;
+				a = temp;
+			}
+			x = b % a;
+			b = a;
+			a = x;
+		}
+		return b;
+	}
 
-			firstFractionDenominator *= secondFractionDenominator;
-			secondFractionDenominator = firstFractionDenominator;
-			return Arrays.asList(addition ? (firstFractionNumerator + secondFractionNumerator) : (firstFractionNumerator - secondFractionNumerator) , firstFractionDenominator);
+	public static List<Long> reduceFraction(List<Long> fraction)
+	{
+		List<Long> newFraction = new ArrayList<Long>();
+		long numerator = fraction.get(0);
+		long denominator = fraction.get(1);
+		long gcd = determineGCD(numerator, denominator);
+		if(gcd != 1)
+		{
+			newFraction.add(numerator / gcd);
+			newFraction.add(denominator / gcd);
 		}
 		else
 		{
-			long firstFractionNumerator = firstFraction.get(0);
-			long secondFractionNumerator = secondFraction.get(0);
-			long commonDenominator = firstFraction.get(1);
-			return Arrays.asList(addition ? (firstFractionNumerator + secondFractionNumerator) : (firstFractionNumerator - secondFractionNumerator) , commonDenominator);
+			newFraction.add(numerator);
+			newFraction.add(denominator);
 		}
+		return newFraction;
 	}
 }
