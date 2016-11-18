@@ -55,9 +55,10 @@ public class Main
 						if(fractionData != null)
 						{
 							List<Long> newFraction = basicFractionOperations(fractionData, type);
-							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+							printFraction(newFraction);
 							newFraction = reduceFraction(newFraction);
-							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+							newFraction = makeMixed(newFraction);
+							printFraction(newFraction);
 						}
 					}
 					else if(operationType.equals(" - "))
@@ -68,9 +69,10 @@ public class Main
 						if(fractionData != null)
 						{
 							List<Long> newFraction = basicFractionOperations(fractionData, type);
-							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+							printFraction(newFraction);
 							newFraction = reduceFraction(newFraction);
-							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+							newFraction = makeMixed(newFraction);
+							printFraction(newFraction);
 						}
 					}
 					else if(operationType.equals(" * "))
@@ -81,9 +83,10 @@ public class Main
 						if(fractionData != null)
 						{
 							List<Long> newFraction = basicFractionOperations(fractionData, type);
-							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+							printFraction(newFraction);
 							newFraction = reduceFraction(newFraction);
-							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+							newFraction = makeMixed(newFraction);
+							printFraction(newFraction);
 						}
 					}
 					else if(operationType.equals(" / "))
@@ -94,9 +97,10 @@ public class Main
 						if(fractionData != null)
 						{
 							List<Long> newFraction = basicFractionOperations(fractionData, type);
-							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+							printFraction(newFraction);
 							newFraction = reduceFraction(newFraction);
-							System.out.println(newFraction.get(0) + "/" + newFraction.get(1));
+							newFraction = makeMixed(newFraction);
+							printFraction(newFraction);
 						}
 					}
 				}
@@ -307,5 +311,30 @@ public class Main
 			newFraction.add(denominator);
 		}
 		return newFraction;
+	}
+	
+	public static List<Long> makeMixed(List<Long> fraction)
+	{
+		long numerator = fraction.get(0);
+		long denominator = fraction.get(1);
+		long mixedNumber = 0;
+		while(numerator > denominator)
+		{
+			mixedNumber++;
+			numerator -= denominator;
+		}
+		return Arrays.asList(mixedNumber, numerator, denominator);
+	}
+	
+	public static void printFraction(List<Long> fraction)
+	{
+		if(fraction.size() == 3)
+		{
+			System.out.println(fraction.get(0) + "_" + fraction.get(1) + "/" + fraction.get(2));
+		}
+		else
+		{
+			System.out.println(fraction.get(0) + "/" + fraction.get(1));
+		}
 	}
 }
