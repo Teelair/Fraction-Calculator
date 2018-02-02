@@ -21,7 +21,8 @@ public class Main
 		System.out.println(" - Addition (+)");
 		System.out.println(" - Subtract (-)");
 		System.out.println(" - Multiply (*)");
-		System.out.println(" - Division (/)\n");
+		System.out.println(" - Division (/)");
+		System.out.println("Type exit at any time between prompts to quit.\n");
 		List<String> validOperations = Arrays.asList(" + ", " - ", " * ", " / ");
 		while(running)
 		{
@@ -30,6 +31,11 @@ public class Main
 			{
 				System.out.print("Please enter something to calculate (ex. 1/2 + 1/4): ");
 				String input = scanner.nextLine();
+				if(input.equalsIgnoreCase("exit"))
+				{
+					running = false;
+					break;
+				}
 				int operationCount = 0;
 				String operationType = "";
 				for(String operation : validOperations)
@@ -94,7 +100,7 @@ public class Main
 		while(secondFractionData.isEmpty())
 		{
 			secondFractionData = retrieveFractionData(input[1]);
-			if(secondFractionData.isEmpty())
+			if(secondFractionData.isEmpty() || secondFractionData.get(secondFractionData.size() == 2 ? 0 : 1) == 0)
 			{
 				System.out.println("Sorry, your second fraction is invalid, please enter your input again.");
 				return null;
